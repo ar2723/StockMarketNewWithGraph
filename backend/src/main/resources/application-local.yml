@@ -7,3 +7,7 @@ spring:
   data:
     redis:
       host: ${REDIS_HOST:localhost}
+
+stockgraph:
+  collector:
+    enabled: ${STOCKGRAPH_COLLECTOR_ENABLED:true}

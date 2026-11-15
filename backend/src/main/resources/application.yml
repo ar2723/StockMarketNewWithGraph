@@ -21,6 +21,9 @@ spring:
       port: ${REDIS_PORT:6379}
   flyway:
     locations: classpath:db/migration
+  mvc:
+    problemdetails:
+      enabled: true           # 오류 응답을 RFC 9457 ProblemDetail(JSON)로
 
 server:
   port: ${SERVER_PORT:8080}
@@ -35,3 +38,8 @@ management:
     health:
       probes:
         enabled: true
+
+# 수집기. 기본은 꺼짐(테스트). 로컬은 application-local.yml, 운영은 환경변수로 켠다.
+stockgraph:
+  collector:
+    enabled: ${STOCKGRAPH_COLLECTOR_ENABLED:false}

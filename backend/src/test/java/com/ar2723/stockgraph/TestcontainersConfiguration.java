@@ -11,7 +11,7 @@ import org.testcontainers.utility.DockerImageName;
  * 통합 테스트용 Postgres/Redis 컨테이너. 운영(infra/docker-compose.prod.yml)과 같은 이미지 태그를 쓴다.
  */
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+public class TestcontainersConfiguration {
 
 	@Bean
 	@ServiceConnection
