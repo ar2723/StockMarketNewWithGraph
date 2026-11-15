@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 
 /** 금융 지표 메타 정보. 수집 on/off 와 급변 기준은 관리자가 바꾼다. */
@@ -95,6 +96,15 @@ public class Indicator {
 
 	public int getDisplayOrder() {
 		return displayOrder;
+	}
+
+	/** 전일 대비 변동률(비율)이 이 지표의 급변 기준(%) 이상인지. */
+	public boolean isSpike(BigDecimal changeRate) {
+		if (changeRate == null) {
+			return false;
+		}
+		BigDecimal pct = changeRate.abs().multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.HALF_UP);
+		return pct.compareTo(spikeThresholdPct) >= 0;
 	}
 
 }

@@ -1,8 +1,82 @@
+@import "tailwindcss";
+
+/*
+ * 색 토큰. 차트 색은 dataviz 기준 팔레트의 diverging pair(빨강/파랑)를 쓰고,
+ * 한국 관례대로 상승 = 빨강, 하락 = 파랑. 두 모드 모두 색각 이상·대비 검사 통과.
+ * 색만으로 구분하지 않도록 숫자에는 ▲▼ 기호, 차트 마커에는 위/아래 화살표 모양을 함께 쓴다.
+ */
 :root {
-  font-family: system-ui, -apple-system, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  color-scheme: light dark;
+  color-scheme: light;
+  --surface-0: #f3f2ef;
+  --surface-1: #fcfcfb;
+  --surface-2: #f0efec;
+  --border: #e2e1dc;
+  --grid: #ecebe7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #77766f;
+  --up: #e34948;
+  --down: #2a78d6;
+  --line: #52514e;
+  --focus: #2a78d6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-0: #121211;
+    --surface-1: #1a1a19;
+    --surface-2: #262624;
+    --border: #383835;
+    --grid: #2a2a28;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #96958c;
+    --up: #e66767;
+    --down: #3987e5;
+    --line: #c3c2b7;
+    --focus: #3987e5;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-0: #121211;
+  --surface-1: #1a1a19;
+  --surface-2: #262624;
+  --border: #383835;
+  --grid: #2a2a28;
+  --text-primary: #f0efec;
+  --text-secondary: #c3c2b7;
+  --text-muted: #96958c;
+  --up: #e66767;
+  --down: #3987e5;
+  --line: #c3c2b7;
+  --focus: #3987e5;
+}
+
+@theme inline {
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-ink: var(--text-primary);
+  --color-ink-2: var(--text-secondary);
+  --color-ink-3: var(--text-muted);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --color-focus: var(--focus);
+  --font-sans: system-ui, -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 
 body {
   margin: 0;
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
 }

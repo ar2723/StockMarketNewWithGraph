@@ -30,7 +30,9 @@ class IndicatorControllerTest extends IntegrationTest {
 	@BeforeEach
 	void setUp() {
 		long btc = indicatorRepository.findByCode("BTC").orElseThrow().getId();
-		priceRepository.upsertDaily(btc, List.of(daily(LocalDate.of(2026, 11, 13), "100", null, true),
+		// BTC 급변 기준은 4% (V3): 11-12 -4.3% 는 급변, 11-14 +2.5% 는 급변 아님
+		priceRepository.upsertDaily(btc, List.of(daily(LocalDate.of(2026, 11, 12), "104.5", null, true),
+				daily(LocalDate.of(2026, 11, 13), "100", "-0.043062", true),
 				daily(LocalDate.of(2026, 11, 14), "102.5", "0.025", true),
 				daily(LocalDate.of(2026, 11, 15), "102", "-0.004878", false)));
 	}
@@ -50,17 +52,21 @@ class IndicatorControllerTest extends IntegrationTest {
 			.andExpect(jsonPath("$[4].code").value("BTC"))
 			.andExpect(jsonPath("$[4].latestDate").value("2026-11-15"))
 			.andExpect(jsonPath("$[4].latestClose").value(102.0))
-			.andExpect(jsonPath("$[4].spike").value(false));
+			.andExpect(jsonPath("$[4].spikeThresholdPct").value(4.0))
+			.andExpect(jsonPath("$[4].spike").value(false))
+			.andExpect(jsonPath("$[0].spikeThresholdPct").value(2.0));
 	}
 
 	@Test
-	void 일봉은_기간을_지정해_조회한다() throws Exception {
-		mockMvc.perform(get("/api/indicators/btc/daily").param("from", "2026-11-14").param("to", "2026-11-15"))
+	void 일봉은_기간을_지정해_조회하고_지표별_기준으로_급변일을_표시한다() throws Exception {
+		mockMvc.perform(get("/api/indicators/btc/daily").param("from", "2026-11-13").param("to", "2026-11-15"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$", hasSize(2)))
-			.andExpect(jsonPath("$[0].tradeDate").value("2026-11-14"))
-			.andExpect(jsonPath("$[0].changeRate").value(0.025))
-			.andExpect(jsonPath("$[1].complete").value(false));
+			.andExpect(jsonPath("$", hasSize(3)))
+			.andExpect(jsonPath("$[0].tradeDate").value("2026-11-13"))
+			.andExpect(jsonPath("$[0].spike").value(true))
+			.andExpect(jsonPath("$[1].changeRate").value(0.025))
+			.andExpect(jsonPath("$[1].spike").value(false))
+			.andExpect(jsonPath("$[2].complete").value(false));
 	}
 
 	@Test

@@ -3,7 +3,6 @@ package com.ar2723.stockgraph.indicator;
 import com.ar2723.stockgraph.price.DailyPrice;
 import com.ar2723.stockgraph.price.PriceRepository;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -50,7 +49,7 @@ public class IndicatorController {
 	}
 
 	@GetMapping("/{code}/daily")
-	public List<DailyPrice> daily(@PathVariable String code,
+	public List<DailyPriceResponse> daily(@PathVariable String code,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
 		Indicator indicator = indicatorRepository.findByCode(code.toUpperCase())
@@ -60,25 +59,38 @@ public class IndicatorController {
 		if (start.isAfter(end) || start.plusDays(MAX_DAYS).isBefore(end)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "조회 기간이 잘못됐다 (최대 3년)");
 		}
-		return priceRepository.findDaily(indicator.getId(), start, end);
+		return priceRepository.findDaily(indicator.getId(), start, end)
+			.stream()
+			.map(p -> DailyPriceResponse.of(p, indicator.isSpike(p.changeRate())))
+			.toList();
 	}
 
 	/**
 	 * 지표 목록 한 줄.
 	 *
-	 * @param spike 최근 일봉의 변동이 급변 기준(기본 ±2%) 이상인지
+	 * @param spikeThresholdPct 이 지표의 급변 기준(%). BTC 4, 나머지 기본 2
+	 * @param spike 최근 일봉의 변동이 급변 기준 이상인지
 	 */
 	public record IndicatorSummary(String code, String name, IndicatorCategory category, String currency,
-			boolean enabled, LocalDate latestDate, BigDecimal latestClose, BigDecimal changeRate, boolean spike) {
+			boolean enabled, BigDecimal spikeThresholdPct, LocalDate latestDate, BigDecimal latestClose,
+			BigDecimal changeRate, boolean spike) {
 
 		static IndicatorSummary of(Indicator i, DailyPrice latest) {
 			BigDecimal rate = latest == null ? null : latest.changeRate();
-			boolean spike = rate != null && rate.abs()
-				.multiply(BigDecimal.valueOf(100))
-				.setScale(4, RoundingMode.HALF_UP)
-				.compareTo(i.getSpikeThresholdPct()) >= 0;
 			return new IndicatorSummary(i.getCode(), i.getName(), i.getCategory(), i.getCurrency(), i.isEnabled(),
-					latest == null ? null : latest.tradeDate(), latest == null ? null : latest.close(), rate, spike);
+					i.getSpikeThresholdPct(), latest == null ? null : latest.tradeDate(),
+					latest == null ? null : latest.close(), rate, i.isSpike(rate));
+		}
+
+	}
+
+	/** 차트용 일봉 한 개. {@code spike} 는 지표별 급변 기준으로 서버가 판정한다(차트 마커). */
+	public record DailyPriceResponse(LocalDate tradeDate, BigDecimal open, BigDecimal high, BigDecimal low,
+			BigDecimal close, BigDecimal volume, BigDecimal changeRate, boolean complete, boolean spike) {
+
+		static DailyPriceResponse of(DailyPrice p, boolean spike) {
+			return new DailyPriceResponse(p.tradeDate(), p.open(), p.high(), p.low(), p.close(), p.volume(),
+					p.changeRate(), p.complete(), spike);
 		}
 
 	}
