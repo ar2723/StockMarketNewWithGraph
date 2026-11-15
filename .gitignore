@@ -1,0 +1,40 @@
+### 시크릿 (절대 커밋하지 않는다) ###
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+### Backend (Gradle) ###
+backend/.gradle/
+backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
+backend/bin/
+backend/out/
+
+### Frontend (Node) ###
+node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+*.local
+
+### IDE ###
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+
+### Claude Code ###
+.claude/settings.local.json
+.claude/hooks/*.log
+
+### OS ###
+.DS_Store
+Thumbs.db

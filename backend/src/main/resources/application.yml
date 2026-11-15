@@ -1,0 +1,37 @@
+# 공통 설정. 접속 정보는 환경변수로만 받는다(.env.example 참고).
+# 로컬 기본값은 application-local.yml 에 있다.
+spring:
+  application:
+    name: stockgraph-backend
+  datasource:
+    url: ${DB_URL:}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate      # 스키마는 Flyway 만 바꾼다
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC      # 저장은 UTC, 표시는 프론트에서 KST
+  data:
+    redis:
+      host: ${REDIS_HOST:}
+      port: ${REDIS_PORT:6379}
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
