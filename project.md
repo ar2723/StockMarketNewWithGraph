@@ -128,7 +128,7 @@
 
 | 단계 | 내용 | 산출물 | 상태 |
 |---|---|---|---|
-| Phase 0 기반 정비 | git, 모노레포 골격, CLAUDE.md, test-runner 이식, 이 문서 보강 | 빌드되는 빈 프로젝트 | 진행 중 |
+| Phase 0 기반 정비 | git, 모노레포 골격, CLAUDE.md, test-runner 이식, 이 문서 보강 | 빌드되는 빈 프로젝트 | 완료 (2026-11-15) |
 | Phase 1 요구사항 확정 | 이 문서의 [미정] 해소, 백로그(Issues) 작성 | 확정된 project.md, Issues | |
 | Phase 2 설계 + PoC | 무료 API 실제 호출, ERD, API 명세, 아키텍처 다이어그램 | ERD, OpenAPI 초안, ADR | |
 | Sprint 1 | 지표 1개로 수집→DB→API→차트→CI/CD→운영 배포 관통 | 외부 접속되는 첫 화면 | |

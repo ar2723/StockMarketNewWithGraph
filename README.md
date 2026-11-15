@@ -20,6 +20,8 @@ docs/      ADR, 트러블슈팅 기록
 docker compose -f infra/docker-compose.local.yml up -d      # Postgres + Redis
 cd backend && ./gradlew bootRun --args='--spring.profiles.active=local'
 curl http://localhost:8080/actuator/health
+
+cd frontend && npm install && npm run dev                   # http://localhost:5173 (/api, /actuator 는 8080 으로 프록시)
 ```
 
 필요한 것: JDK 21, Docker, Node 22.12+

@@ -58,8 +58,9 @@ docker compose -f infra/docker-compose.local.yml up -d       # 로컬 Postgres(5
 
 # frontend/  (Node 22.12+ 필요)
 npm run dev                                                  # http://localhost:5173, /api 는 8080 으로 프록시
-npm test -- --run
-npm run build
+npm run lint                                                 # oxlint
+npm test -- --run                                            # Vitest
+npm run build                                                # tsc + vite build
 ```
 
 ## 구조와 규칙
